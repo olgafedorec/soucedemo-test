@@ -16,6 +16,19 @@ describe('sorting products', () => {
     expect(prices).toEqual(sortedAsc);
 });
 
+it('should sort product by price high to low', async () => {
+     console.log('Test started');   
+    await LoginPage.open();
+    await LoginPage.login('standard_user', 'secret_sauce');
+    await InventoryPage.selectLohi();
+    
+    const prices = await InventoryPage.getPricesArray();
+
+    const sortedDesc = [...prices].sort((a, b) => b - a);
+
+    expect(prices).toEqual(sortedDesc);
+});
+
 it('should sort product by price a to z', async () => {
     await LoginPage.open();
     await LoginPage.login('standard_user', 'secret_sauce');
