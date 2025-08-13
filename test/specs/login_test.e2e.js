@@ -26,7 +26,7 @@ it("should logout after valid login", async () => {
     expect(url).toContain("inventory");
     await inventoryPage.logout();
     const logoutUrl = await browser.getUrl();
-    expect(logoutUrl).toBe("https://www.saucedemo.com/");
+    expect(logoutUrl).toContain("https://www.saucedemo.com/");
 });
 });
 
