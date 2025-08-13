@@ -7,7 +7,6 @@ describe('Add to cart tests', () => {
         await loginPage.open();
         await loginPage.login('standard_user', 'secret_sauce');
     });
-
     it('should save product after logout', async () => {
         await inventoryPage.addToCart();
         await expect (inventoryPage.cartCounter).toBeDisplayed();
@@ -15,7 +14,6 @@ describe('Add to cart tests', () => {
         await loginPage.login('standard_user', 'secret_sauce');
         await expect (inventoryPage.cartCounter).toBeDisplayed();
     });
-
     it('should not allow checkout with empty cart', async () => {
         await inventoryPage.openCart();
         const items = await cartPage.cartItems;

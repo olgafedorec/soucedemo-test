@@ -9,26 +9,18 @@ describe('Checkout flow', () => {
     it('should complete full checkout process', async () => {
         await loginPage.open();
         await loginPage.login('standard_user', 'secret_sauce');
-
         await inventoryPage.addToCart();
         expect(await inventoryPage.cartCounter.getText()).toContain('1');
-
         await inventoryPage.clickElement(inventoryPage.cartBtn);
         await cartPage.toCheckout();
-
         await checkoutStep1Page.fillForm('John', 'Doe', '12345');
         await checkoutStep1Page.continueCheckout();
-
         const url = await browser.getUrl();
         expect(url).toContain('checkout-step-two');
-
         await checkoutStep2Page.finishOrder();
-
         expect(await checkoutCompletePage.thankYouMessage.getText()).toContain('Thank you for your order!');
-
         await inventoryPage.clickElement(checkoutCompletePage.backHomeBtn);
         expect(await browser.getUrl()).toContain('inventory');
-
         await expect(inventoryPage.cartCounter).not.toBeExisting();
     });
 });
