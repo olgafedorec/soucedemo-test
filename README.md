@@ -20,9 +20,4 @@ Footer links
 Valid checkout
 Checkout without products
 
-## Known Issues
-❗️The "sorting product by price low to high" test is currently failing.
-Error: TypeError: object is not iterable
-Possible cause: Price elements may not be updating properly after sorting.
-This issue is being investigated.
 
