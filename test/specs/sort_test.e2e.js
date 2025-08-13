@@ -1,46 +1,37 @@
-const { expect } = require('@wdio/globals');
-const LoginPage = require('../pageobjects/login.page');
-const InventoryPage = require('../pageobjects/inventory.page');
+const loginPage = require('../pageobjects/login.page');
+const inventoryPage = require('../pageobjects/inventory.page');
 
-describe('sorting products', () => {
-    it('should sort product by price low to high', async () => {
-     console.log('Test started');   
-    await LoginPage.open();
-    await LoginPage.login('standard_user', 'secret_sauce');
-    await InventoryPage.selectLohi();
-    
-    const prices = await InventoryPage.getPricesArray();
+describe('should sort products', () => {
+    const sortingTests = [
+        {option: 'lohi', type: 'price', order: 'asc'},
+        {option: 'hilo', type: 'price', order: 'desc'},
+        {option: 'az', type: 'name', order: 'asc'},
+        {option: 'za', type: 'name', order: 'desc'}
+    ];
 
-    const sortedAsc = [...prices].sort((a, b) => a - b);
+    beforeEach(async () => {
+        await loginPage.open();
+        await loginPage.login('standard_user', 'secret_sauce');
+    });
 
-    expect(prices).toEqual(sortedAsc);
-});
+    sortingTests.forEach(({ option, type, order }) => {
+        it(`should sort products by ${type} ${order}`, async() => {
+            await inventoryPage.selectSortOption(option);
+            let items;
+            if(type === 'price') {
+                items = await inventoryPage.getPriceArray();
+            } else {
+                items = await inventoryPage.getNamesArray();
+            }
 
-it('should sort product by price high to low', async () => {
-     console.log('Test started');   
-    await LoginPage.open();
-    await LoginPage.login('standard_user', 'secret_sauce');
-    await InventoryPage.selectLohi();
-    
-    const prices = await InventoryPage.getPricesArray();
-
-    const sortedDesc = [...prices].sort((a, b) => b - a);
-
-    expect(prices).toEqual(sortedDesc);
-});
-
-it('should sort product by price a to z', async () => {
-    await LoginPage.open();
-    await LoginPage.login('standard_user', 'secret_sauce');
-    await InventoryPage.selectAz();
-    
-});
-
-it('should sort product by price z to a', async () => {
-    await LoginPage.open();
-    await LoginPage.login('standard_user', 'secret_sauce');
-    await InventoryPage.selectZa();
-    
-});
-
+            const sortedItems = [...items].sort((a, b) => {
+                if(type === 'price') {
+                    return order === 'asc' ? a - b : b - a;
+                } else {
+                    return order === 'asc' ? a.localeCompare(b) : b.localeCompare(a);
+                }
+            });
+            expect(items).toEqual(sortedItems);
+        });
+    });
 });

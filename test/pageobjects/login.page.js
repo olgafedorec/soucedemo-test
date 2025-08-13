@@ -1,4 +1,3 @@
-const { $ } = require('@wdio/globals')
 const Page = require('./page');
 
 class LoginPage extends Page {
@@ -33,5 +32,5 @@ class LoginPage extends Page {
     }
 
 }
-
-module.exports = new LoginPage();
+const loginPage = new LoginPage();
+module.exports = loginPage;

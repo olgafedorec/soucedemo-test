@@ -1,42 +1,30 @@
-const { expect } = require('@wdio/globals');
-const LoginPage = require('../pageobjects/login.page');
-const InventoryPage = require('../pageobjects/inventory.page');
-const CartPage = require('../pageobjects/cart.page');
+const loginPage = require('../pageobjects/login.page');
+const inventoryPage = require('../pageobjects/inventory.page');
+const cartPage = require('../pageobjects/cart.page');
 
-describe('add to cart tests', () => {
+describe('Add to cart tests', () => {
+    beforeEach(async () => {
+        await loginPage.open();
+        await loginPage.login('standard_user', 'secret_sauce');
+    });
+
     it('should save product after logout', async () => {
-    await LoginPage.open();
-    await LoginPage.login('standard_user', 'secret_sauce');
-    await InventoryPage.addToCart();
-    
-    const isCartCounterVisible = await InventoryPage.cartCounter.isDisplayed();
-    expect(isCartCounterVisible).toBe(true);
-    
-    await InventoryPage.logout();
-    await LoginPage.login('standard_user', 'secret_sauce');
+        await inventoryPage.addToCart();
+        await expect (inventoryPage.cartCounter).toBeDisplayed();
+        await inventoryPage.logout();
+        await loginPage.login('standard_user', 'secret_sauce');
+        await expect (inventoryPage.cartCounter).toBeDisplayed();
+    });
 
-    const isCartCounterVisibleNow = await InventoryPage.cartCounter.isDisplayed();
-    expect(isCartCounterVisibleNow).toBe(true);
-});
-
-it('should not allow checkout with empty cart', async () => {
-    await LoginPage.open();
-    await LoginPage.login('standard_user', 'secret_sauce');
-
-    await InventoryPage.cartBtn.click();
-
-    const items = await CartPage.cartItems;
-    if (items.length > 0) {
-        for (const item of items) {
-            const removeBtn = await item.$('button[data-test^="remove-"]');
-            await removeBtn.click();
+    it('should not allow checkout with empty cart', async () => {
+        await inventoryPage.openCart();
+        const items = await cartPage.cartItems;
+        if (items.length) {
+            for (const _ of items) {
+                await cartPage.toRemove();
+            }
         }
-    }
-
-    await CartPage.toCheckout();
-
-    const isErrorVisible = await CartPage.isErrorMessageDisplayed();
-    expect(isErrorVisible).toBe(true, 'Expected error message to be displayed when checking out with empty cart');
-});
-
+        await cartPage.toCheckout();
+        await expect (cartPage.errorMessage).toBeDisplayed();
+    });
 });

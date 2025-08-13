@@ -1,5 +1,4 @@
 const { browser } = require('@wdio/globals');
-
 const BASE_URL = 'https://www.saucedemo.com';
 
 module.exports = class Page {
